@@ -14,21 +14,21 @@ class QuizzPage extends StatefulWidget {
 
 class _QuizzPageState extends State<QuizzPage> {
   final quizzCnt = Get.put(QuizzController());
-  int currentQuestionIndex = 0;
+  int currentQuesIndex = 0;
   int score = 0;
 
   Future<void> nextQuestion(
       int selectedOptionIndex, String value, BuildContext context)async {
     // print(value +
-    //     quizzData[currentQuestionIndex].answer.toString() +
+    //     quizzData[currentQuesIndex].answer.toString() +
     //     ' ' +
     //     selectedOptionIndex.toString());
-    if (value == quizzCnt.quizzData[currentQuestionIndex].answer) {
+    if (value == quizzCnt.quizzData[currentQuesIndex].answer) {
       score=score+1;
     }
 
-    if (currentQuestionIndex < quizzCnt.quizzData.length - 1) {
-      currentQuestionIndex=currentQuestionIndex+1;
+    if (currentQuesIndex < quizzCnt.quizzData.length - 1) {
+      currentQuesIndex=currentQuesIndex+1;
     } else {
       showResult(context);
     }
@@ -43,7 +43,7 @@ void showResult(BuildContext context) {
           actions: [
             TextButton(
               onPressed: () {
-                currentQuestionIndex = 0;
+                currentQuesIndex = 0;
                 score = 0;
                 Navigator.of(context).pop();
               },
@@ -73,14 +73,14 @@ void showResult(BuildContext context) {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    quizzCnt.quizzData[currentQuestionIndex].question!+'+'+quizzCnt.quizzData[currentQuestionIndex].answer!,
+                    quizzCnt.quizzData[currentQuesIndex].question!+'+'+quizzCnt.quizzData[currentQuesIndex].answer!,
                     style: const TextStyle(
                         fontSize: 24, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
                   ...quizzCnt
-                      .quizzData[currentQuestionIndex].optionName!
+                      .quizzData[currentQuesIndex].optionName!
                       .asMap()
                       .entries
                       .map((entry) {
