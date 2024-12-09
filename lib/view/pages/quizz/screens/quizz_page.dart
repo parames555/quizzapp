@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quizapp/controllers/quizz_controller.dart';
 import 'package:quizapp/helper/resolutions.dart';
@@ -14,192 +13,194 @@ class QuizzPage extends StatefulWidget {
 
 class _QuizzPageState extends State<QuizzPage> {
   final quizzCnt = Get.put(QuizzController());
-  int currentQuesIndex = 0;
-  int score = 0;
 
-  Future<void> nextQuestion(
-      int selectedOptionIndex, String value, BuildContext context)async {
-    // print(value +
-    //     quizzData[currentQuesIndex].answer.toString() +
-    //     ' ' +
-    //     selectedOptionIndex.toString());
-    if (value == quizzCnt.quizzData[currentQuesIndex].answer) {
-      score=score+1;
-    }
-
-    if (currentQuesIndex < quizzCnt.quizzData.length - 1) {
-      currentQuesIndex=currentQuesIndex+1;
-    } else {
-      showResult(context);
-    }
-  }
-void showResult(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Quiz Finished"),
-          content: Text("Your score: $score/${quizzCnt.quizzData.length}"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                currentQuesIndex = 0;
-                score = 0;
-                Navigator.of(context).pop();
-              },
-              child: const Text("Restart"),
-            ),
-          ],
-        );
-      },
-    );
-  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Quiz App"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: quizzCnt.isloading
+    ThemeData theme = Theme.of(context);
+    return Obx(() {
+      return Scaffold(
+        backgroundColor: const Color(0xfffff6e9),
+        body: (quizzCnt.currentQuesIndex.value == 0 &&
+                quizzCnt.quizzData.isEmpty)
             ? Center(
                 child: SizedBox(
                     width: Screen.bodyWidth(context) * 0.2,
                     child: Lottie.asset('assets/spinner.json')),
               )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            : Stack(
                 children: [
-                  Text(
-                    quizzCnt.quizzData[currentQuesIndex].question!+'+'+quizzCnt.quizzData[currentQuesIndex].answer!,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
+                  const SizedBox(
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
-                  const SizedBox(height: 20),
-                  ...quizzCnt
-                      .quizzData[currentQuesIndex].optionName!
-                      .asMap()
-                      .entries
-                      .map((entry) {
-                    int idx = entry.key;
-                    String option = entry.value;
-                    return ElevatedButton(
-                      onPressed: () =>
-                          nextQuestion(idx, option, context),
-                      child: Text(option),
-                    );
-                  }).toList(),
+                  Column(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: Screen.bodyWidth(context),
+                        height: Screen.bodyHeight(context) * 0.2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: Screen.bodyHeight(context) * 0.04,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: Screen.bodyWidth(context) * 0.15,
+                                    height: Screen.bodyHeight(context) * 0.08,
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey[500]!,
+                                            blurRadius: 2.0,
+                                            spreadRadius: 1.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      "${quizzCnt.score.value}",
+                                      style: theme.textTheme.bodyLarge,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: Screen.bodyWidth(context) * 0.15,
+                                    height: Screen.bodyHeight(context) * 0.08,
+                                    decoration: BoxDecoration(
+                                      color: Colors.redAccent,
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey[500]!,
+                                            blurRadius: 2.0,
+                                            spreadRadius: 1.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: quizzCnt.currentQuesIndex.value == 0
+                                        ? Text(
+                                            "0",
+                                            style: theme.textTheme.bodyLarge,
+                                          )
+                                        : Text(
+                                            "${(quizzCnt.currentQuesIndex.value - quizzCnt.score.value) + 1}",
+                                            style: theme.textTheme.bodyLarge,
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              width: Screen.bodyWidth(context),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: LinearGradient(colors: [
+                                    Colors.blueAccent,
+                                    Colors.grey[300]!,
+                                    Colors.blue,
+                                  ]),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        color: Colors.grey,
+                                        spreadRadius: 1.0,
+                                        blurRadius: 1.0)
+                                  ]),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'QUESTIONS ${quizzCnt.currentQuesIndex.value + 1} OF ${quizzCnt.quizzData.length} ',
+                                    style: theme.textTheme.bodyMedium!.copyWith(
+                                        // fontWeight: FontWeight.bold
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const Divider(),
+                                  Text(
+                                    '${quizzCnt.quizzData[quizzCnt.currentQuesIndex.value].question!}}',
+                                    style: theme.textTheme.bodyLarge!
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            ...quizzCnt
+                                .quizzData[quizzCnt.currentQuesIndex.value]
+                                .optionName!
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int idx = entry.key;
+                              String option = entry.value;
+                              return ElevatedButton(
+                                onPressed: () =>
+                                    quizzCnt.nextQuestion(idx, option, context),
+                                child: Text(option),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: Screen.bodyHeight(context) / 1.2,
+                    left: Screen.bodyWidth(context) / 1.5,
+                    child: Container(
+                        width: Screen.bodyWidth(context) * 0.4,
+                        height: Screen.bodyHeight(context) * 0.2,
+                        decoration: const BoxDecoration(boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              spreadRadius: 1.0,
+                              blurRadius: 1.0)
+                        ], color: Colors.amber, shape: BoxShape.circle)),
+                  ),
+                  Positioned(
+                    top: Screen.bodyHeight(context) / 1.32,
+                    left: Screen.bodyWidth(context) / 1.3,
+                    child: Container(
+                        width: Screen.bodyWidth(context) * 0.4,
+                        height: Screen.bodyHeight(context) * 0.2,
+                        decoration:  const BoxDecoration(boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              spreadRadius: 1.0,
+                              blurRadius: 1.0)
+                        ],
+                            color: Colors.blue, shape: BoxShape.circle)),
+                  ),
                 ],
               ),
-      ),
-    );
+      );
+    });
   }
 
-  // int? selectedRadioTile;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   selectedRadioTile = 0;
-  // }
-
-  // setSelectedRadioTile(int val) {
-  //   setState(() {
-  //     selectedRadioTile = val;
-  //   });
-  // }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       automaticallyImplyLeading: false,
-  //       title: const Text("Quizz"),
-  //     ),
-  //     body: Container(
-  //       padding: EdgeInsets.all(Screen.bodyHeight(context) * 0.008),
-  //       width: Screen.bodyWidth(context),
-  //       height: Screen.bodyHeight(context),
-  //       child: ListView.builder(
-  //           itemCount: 2,
-  //           itemBuilder: (context, index) {
-  //             return Container(
-  //               padding: EdgeInsets.all(Screen.bodyHeight(context) * 0.008),
-  //               margin:
-  //                   EdgeInsets.only(bottom: Screen.bodyHeight(context) * 0.004),
-  //               width: Screen.bodyWidth(context),
-  //               // height: Screen.bodyHeight(context)*0.2,
-  //               decoration: BoxDecoration(
-  //                   color: Colors.blueAccent,
-  //                   borderRadius: BorderRadius.circular(10)),
-  //               child: Column(
-  //                 children: [
-  //                   Container(
-  //                     width: Screen.bodyWidth(context),
-  //                     padding:
-  //                         EdgeInsets.all(Screen.bodyHeight(context) * 0.006),
-  //                     decoration: BoxDecoration(
-  //                         borderRadius: BorderRadius.circular(5),
-  //                         color: Colors.white),
-  //                     child: const Text(
-  //                         "afdasfasf asdasdk asopdjoijasodjas oajsdojiaoijsd aosjidoiajsd oajsodijasd "),
-  //                   ),
-  //                   SizedBox(
-  //                     height: Screen.bodyHeight(context) * 0.006,
-  //                   ),
-  //                   Container(
-  //                     width: Screen.bodyWidth(context),
-  //                     padding:
-  //                         EdgeInsets.all(Screen.bodyHeight(context) * 0.006),
-  //                     decoration: BoxDecoration(
-  //                         borderRadius: BorderRadius.circular(5),
-  //                         color: Colors.white),
-  //                     child: IntrinsicHeight(
-  //                       child: Row(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Container(
-  //                             width: Screen.bodyWidth(context) / 2.3,
-  //                             child: RadioListTile(
-  //                               contentPadding: EdgeInsets.zero,
-  //                               value: 1,
-  //                               groupValue: selectedRadioTile,
-  //                               title: const Text("Radio 1 rgsd sdfgsdg sdgsdg sdgsdg",),
-  //                               onChanged: (val) {
-  //                                 setSelectedRadioTile(val!);
-  //                               },
-  //                               activeColor: Colors.red,
-  //                               selected: true,
-  //                             ),
-  //                           ),
-  //                           Container(
-  //                             width: Screen.bodyWidth(context) / 2.3,
-  //                             child: RadioListTile(
-  //                               contentPadding: EdgeInsets.zero,
-  //                               value: 2,
-  //                               groupValue: selectedRadioTile,
-  //                               title: const Text("Radio 2"),
-  //                               onChanged: (val) {
-  //                                 setSelectedRadioTile(val!);
-  //                               },
-  //                               activeColor: Colors.red,
-  //                               selected: false,
-  //                             ),
-  //                           )
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   )
-  //                 ],
-  //               ),
-  //             );
-  //           }),
-  //     ),
-  //   );
-  // }
 }
 
 class Question {
