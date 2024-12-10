@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quizapp/controllers/dashboard_controller.dart';
 import 'package:quizapp/helper/db_helper/sharedpref.dart';
 import 'package:quizapp/helper/resolutions.dart';
 import 'package:quizapp/helper/routes_value.dart';
+import 'package:quizapp/view/pages/dashboard/widgets/chart_widget.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -18,8 +20,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    dashCnt.onInit();
-
+    // dashCnt.onInit();
     return Obx(() {
       return Scaffold(
         body: Container(
@@ -55,14 +56,17 @@ class _DashboardPageState extends State<DashboardPage> {
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          " ",
-                          style: theme.textTheme.headlineSmall!.copyWith(
+                          " Quiz yourself, challenge your mind,\nand grow beyond limits",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.actorTextTheme().bodyLarge!.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey),
+                              fontSize: 18,
+                              color: Colors.purple),
                         ),
                       ],
                     ),
                   ),
+                  
                   Padding(
                     padding: EdgeInsets.all(Screen.bodyHeight(context) * 0.01),
                     child: Container(
@@ -81,36 +85,41 @@ class _DashboardPageState extends State<DashboardPage> {
                           ]),
                       child: Column(
                         children: [
-                          
                           Row(
                             children: [
                               SizedBox(
                                 width: Screen.bodyWidth(context) / 2.4,
                                 child: Column(
                                   children: [
-                                   
                                     IntrinsicHeight(
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Column(
-                                            children: [ Text(
+                                            children: [
+                                              Text(
                                                 "Progress",
-                                                style: theme.textTheme.bodyLarge!
+                                                style: theme
+                                                    .textTheme.bodyLarge!
                                                     .copyWith(
-                                                        fontWeight: FontWeight.bold),
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                               ),
                                               Text(
                                                 "100 /",
-                                                style: theme.textTheme.headlineLarge!
+                                                style: theme
+                                                    .textTheme.headlineLarge!
                                                     .copyWith(
-                                                        fontWeight: FontWeight.bold),
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                               ),
                                             ],
                                           ),
                                           Text(
                                             " ${dashCnt.currentTotal.value.toString()}",
-                                            style: theme.textTheme.headlineSmall!
+                                            style: theme
+                                                .textTheme.headlineSmall!
                                                 .copyWith(
                                                     fontWeight: FontWeight.bold,
                                                     color: dashCnt.currentTotal
@@ -169,7 +178,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                     .copyWith(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colors.grey),
+                                                        color: Colors.blue),
                                               ),
                                             ),
                                             Text(
@@ -218,43 +227,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               SizedBox(
                                   width: Screen.bodyWidth(context) * 0.5,
                                   height: Screen.bodyHeight(context) * 0.25,
-                                  child: SfCircularChart(
-                                      tooltipBehavior: dashCnt.tooltip,
-                                      series: <CircularSeries<ChartData,
-                                          String>>[
-                                        DoughnutSeries<ChartData, String>(
-                                            dataSource: dashCnt.data.isEmpty
-                                                ? [
-                                                    ChartData("Test", 10),
-                                                    ChartData("Test", 10),
-                                                    ChartData("Test", 10),
-                                                  ]
-                                                : dashCnt.data,
-                                            // ignore: prefer_const_constructors
-                                            dataLabelSettings:
-                                                const DataLabelSettings(
-                                              isVisible: true,
-                                              labelPosition:
-                                                  ChartDataLabelPosition
-                                                      .outside,
-                                              textStyle: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black),
-                                              labelAlignment:
-                                                  ChartDataLabelAlignment
-                                                      .bottom,
-                                              connectorLineSettings:
-                                                  ConnectorLineSettings(
-                                                type: ConnectorType.curve,
-                                                length: '10%',
-                                              ),
-                                            ),
-                                            xValueMapper: (ChartData data, _) =>
-                                                data.x,
-                                            yValueMapper: (ChartData data, _) =>
-                                                data.y,
-                                            name: 'Quizz')
-                                      ]))
+                                  child: Chartwidget(dashCnt: dashCnt))
                             ],
                           ),
                         ],
@@ -295,11 +268,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      setState(() {
-                          SharedPref.clearAttemptQues();
-                       SharedPref.clearTotalscore();
-                      });
-                     
+                      dashCnt.resetProgress();
                     },
                     child: Padding(
                       padding:

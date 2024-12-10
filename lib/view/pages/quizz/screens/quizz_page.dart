@@ -48,28 +48,33 @@ class _QuizzPageState extends State<QuizzPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    width: Screen.bodyWidth(context) * 0.15,
-                                    height: Screen.bodyHeight(context) * 0.08,
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      border: Border.all(
-                                        color: Colors.grey,
+                                InkWell(
+                                  onTap: (){
+                                   quizzCnt.showResult(context);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      width: Screen.bodyWidth(context) * 0.15,
+                                      height: Screen.bodyHeight(context) * 0.08,
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.grey[500]!,
+                                              blurRadius: 2.0,
+                                              spreadRadius: 1.0)
+                                        ],
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.grey[500]!,
-                                            blurRadius: 2.0,
-                                            spreadRadius: 1.0)
-                                      ],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      "${quizzCnt.score.value}",
-                                      style: theme.textTheme.bodyLarge,
+                                      child: Text(
+                                        "${quizzCnt.score.value}",
+                                        style: theme.textTheme.bodyLarge,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -98,7 +103,7 @@ class _QuizzPageState extends State<QuizzPage> {
                                             style: theme.textTheme.bodyLarge,
                                           )
                                         : Text(
-                                            "${(quizzCnt.currentQuesIndex.value - quizzCnt.score.value) + 1}",
+                                            "${quizzCnt.wrong.value}",
                                             style: theme.textTheme.bodyLarge,
                                           ),
                                   ),
